@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import frc.robot.Constants.DriveConstants;
@@ -66,24 +67,49 @@ public class Robot extends TimedRobot {
    * below with additional strings. If using the SendableChooser make sure to add them to the
    * chooser code above as well.
    */
+   
+  private double startTime;
+
   @Override
   public void autonomousInit() {
-    
+    startTime = Timer.getFPGATimestamp();
   }
+
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    double time = Timer.getFPGATimestamp();
+
+    if (time - startTime < 5) {
+      driveBackLeftMotor.set(0.5);
+      driveTopLeftMotor.set(0.5);
+      driveBackRightMotor.set(0.5);
+      driveTopRightMotor.set(0.5);
+    } else {
+      driveBackLeftMotor.set(0);
+      driveTopLeftMotor.set(0);
+      driveBackRightMotor.set(0);
+      driveTopRightMotor.set(0);
     }
-  
+
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    driveBackLeftMotor.follow(driveTopLeftMotor);
+    driveBackRightMotor.follow(driveTopRightMotor);
+  }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if (driveStick.getSquareButton()) {
+      
+    }
+
+
     m_robotDrive.arcadeDrive(-driveStick.getLeftY(),-driveStick.getRightX());
   }
 
